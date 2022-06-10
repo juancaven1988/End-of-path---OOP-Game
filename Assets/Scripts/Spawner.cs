@@ -19,12 +19,17 @@ public class Spawner : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        enemyCount = GameObject.FindGameObjectsWithTag("Enemy").Length;
 
-        if(enemyCount == 0)
+        if(GameManager.GameStart && !GameManager.GameOver)
         {
-            SpawnEnemyWave();
+            enemyCount = GameObject.FindGameObjectsWithTag("Enemy").Length;
+
+            if (enemyCount == 0)
+            {
+                SpawnEnemyWave();
+            }
         }
+       
     }
 
     void SpawnEnemyWave()

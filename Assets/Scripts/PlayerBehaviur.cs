@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using UnityEngine.UI;
+
+
+[RequireComponent(typeof(AudioSource))]
 public class PlayerBehaviur : Disparador
 {
 
@@ -14,6 +18,12 @@ public class PlayerBehaviur : Disparador
     float anguloRotacion = 90;
     public bool rotando = false;
 
+    [Header("Salud")]
+    [SerializeField] Slider barravida;
+
+    AudioSource audioSource;
+    [SerializeField] AudioClip shotClip;
+    
     
 
 
@@ -21,7 +31,8 @@ public class PlayerBehaviur : Disparador
     // Start is called before the first frame update
     void Start()
     {
-        
+        barravida.value = GetComponent<Salud>().saludActual;
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -48,17 +59,23 @@ public class PlayerBehaviur : Disparador
         {
             Disparar();
         }
-        
+
+        barravida.value = GetComponent<Salud>().saludActual;
+
     }
 
     private void FixedUpdate()
     {
-        Mover();
-        
-        if (rotacion != 0)
+       if(GameManager.GameStart && !GameManager.GameOver)
         {
-            StartCoroutine(Rotar());
+            Mover();
+
+            if (rotacion != 0)
+            {
+                StartCoroutine(Rotar());
+            }
         }
+       
 
     }
     //POLIMORFISMO
@@ -69,6 +86,7 @@ public class PlayerBehaviur : Disparador
         
         if(balasDisparar.Length == canons.Length)
         {
+            audioSource.PlayOneShot(shotClip);
             for(int i = 0; i < canons.Length; i++)
             {
                 balasDisparar[i].transform.position = canons[i].position;
