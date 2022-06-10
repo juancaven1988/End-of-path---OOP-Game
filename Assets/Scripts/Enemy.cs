@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+[RequireComponent(typeof(AudioSource))]
 [RequireComponent(typeof(NavMeshAgent))]
 public  class Enemy : Disparador
 {
@@ -15,6 +16,9 @@ public  class Enemy : Disparador
     [SerializeField] protected float coolDownDisparo;
  
     protected float tiempoEntreDisparo;
+    [SerializeField] AudioClip shotClip;
+    AudioSource audioSource;
+    
 
 
 
@@ -24,32 +28,35 @@ public  class Enemy : Disparador
         player = FindObjectOfType<PlayerBehaviur>();
         agente = GetComponent<NavMeshAgent>();
         agente.speed = velocidad;
+        audioSource = GetComponent<AudioSource>();
         
     }
 
     // Update is called once per frame
    protected void Update()
     {
-
-        tiempoEntreDisparo += Time.deltaTime;
-
-        agente.destination = player.transform.position;
-
-        transform.LookAt(player.transform);
-
-        if(Vector3.Distance(transform.position,player.transform.position) <= distanciaDisparo && tiempoEntreDisparo/coolDownDisparo >= 1 )
+        if(GameManager.GameStart && !GameManager.GameOver)
         {
-            
-            Disparar();
-            tiempoEntreDisparo = 0;
+            tiempoEntreDisparo += Time.deltaTime;
+
+            agente.destination = player.transform.position;
+
+            transform.LookAt(player.transform);
+
+            if (Vector3.Distance(transform.position, player.transform.position) <= distanciaDisparo && tiempoEntreDisparo / coolDownDisparo >= 1)
+            {
+
+                Disparar();
+                tiempoEntreDisparo = 0;
+            }
+
         }
-             
+
     }
 
     protected override void Disparar()
     {
-        
-             
+            audioSource.PlayOneShot(shotClip);
             GameObject[] bala = EncontrarBalas();
 
             bala[0].transform.position = canons[0].transform.position;

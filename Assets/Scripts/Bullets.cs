@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
 public class Bullets : MonoBehaviour
 {
 
@@ -9,9 +11,12 @@ public class Bullets : MonoBehaviour
     float zLimit = 66;
     float xLimit = 80;
 
+    SFXScript soundEfector;
+
     // Start is called before the first frame update
     void Start()
     {
+        soundEfector = FindObjectOfType<SFXScript>();
         
     }
 
@@ -31,16 +36,26 @@ public class Bullets : MonoBehaviour
         }
     }
 
+
+    
+
     private void OnTriggerEnter(Collider other)
     {
+        soundEfector.PlayHit();
 
-        Debug.Log(other.name);
+        
         Salud salud = other.GetComponent<Salud>();
+
+        if(other.CompareTag("Enemy"))
+        {
+            GameManager.Instancia.IncreaseScore();
+        }
 
         if(salud != null)
         {
             salud.perderSalud();
         }
+
         gameObject.SetActive(false);
     }
 }
